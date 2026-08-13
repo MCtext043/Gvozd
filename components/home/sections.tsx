@@ -9,10 +9,17 @@ import {
 } from "lucide-react";
 import { SITE } from "@/lib/site";
 import { Container, SectionHeading } from "@/components/ui/section";
-import { CategoryCard, CompanyCard, NewsCard, PromotionCard } from "@/components/catalog/cards";
+import {
+  CategoryCard,
+  CompanyCard,
+  NewsCard,
+  PlanOfficeCard,
+  PromotionCard,
+} from "@/components/catalog/cards";
 import { SearchAutocomplete } from "@/components/forms/search-autocomplete";
 import { LeadForm } from "@/components/forms/lead-form";
-import { EmptyState } from "@/components/ui/section";
+import { getFeaturedPlanOffices } from "@/lib/plan-offices";
+import planData from "@/lib/plan-data.json";
 import type { Category, Company, NewsItem, Promotion } from "@/types";
 
 export function HomeSearchSection() {
@@ -58,6 +65,8 @@ export function QuickCategories({ categories }: { categories: Category[] }) {
 }
 
 export function HomePromotions({ items }: { items: Promotion[] }) {
+  if (items.length === 0) return null;
+
   return (
     <section className="bg-[var(--gvozd-gray-50)] py-14">
       <Container>
@@ -70,51 +79,65 @@ export function HomePromotions({ items }: { items: Promotion[] }) {
             </Link>
           }
         />
-        {items.length === 0 ? (
-          <EmptyState
-            title="Сейчас нет активных акций"
-            description="Загляните позже или позвоните в службу информации."
-            action={
-              <a href={SITE.phoneHref} className="text-sm font-semibold text-[var(--gvozd-red)]">
-                {SITE.phone}
-              </a>
-            }
-          />
-        ) : (
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {items.slice(0, 3).map((item) => (
-              <PromotionCard key={String(item.id)} item={item} />
-            ))}
-          </div>
-        )}
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {items.slice(0, 3).map((item) => (
+            <PromotionCard key={String(item.id)} item={item} />
+          ))}
+        </div>
       </Container>
     </section>
   );
 }
 
 export function HomeCompanies({ items }: { items: Company[] }) {
+  const fromApi = items.length > 0;
+  const featuredOffices = getFeaturedPlanOffices(6);
+  const total = fromApi ? items.length : planData.offices.length;
+
   return (
     <section className="py-14">
       <Container>
         <SectionHeading
-          eyebrow="Компании"
-          title="Отделы и арендаторы"
-          description="Найдите нужный офис и уточните наличие напрямую."
+          eyebrow="Навигация по центру"
+          title="Магазины и отделы"
+          description={`${total.toLocaleString("ru-RU")} точек на плане — найдите офис по номеру, залу или категории.`}
           action={
-            <Link href="/companies" className="text-sm font-semibold text-[var(--gvozd-red)] hover:underline">
-              Все компании
-            </Link>
+            <div className="flex flex-wrap gap-3">
+              <Link href="/companies" className="text-sm font-semibold text-[var(--gvozd-red)] hover:underline">
+                Все отделы
+              </Link>
+              <Link href="/plan" className="text-sm font-semibold text-[var(--gvozd-graphite)] hover:underline">
+                План этажей
+              </Link>
+            </div>
           }
         />
-        {items.length === 0 ? (
-          <EmptyState
-            title="Список компаний загружается из API"
-            description="Когда backend доступен, здесь появятся карточки отделов центра."
-          />
-        ) : (
+        <div className="mb-6 flex flex-wrap gap-2">
+          {planData.halls.map((hall) => (
+            <Link
+              key={hall.key}
+              href={`/plan?hall=${hall.key}`}
+              className="inline-flex items-center gap-2 rounded-full border border-[var(--gvozd-gray-200)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--gvozd-graphite)] hover:border-[var(--gvozd-red)]/40"
+            >
+              <span
+                className="h-2.5 w-2.5 rounded-full"
+                style={{ backgroundColor: hall.color }}
+                aria-hidden
+              />
+              {hall.label}
+            </Link>
+          ))}
+        </div>
+        {fromApi ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {items.slice(0, 6).map((c) => (
               <CompanyCard key={String(c.id)} company={c} />
+            ))}
+          </div>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {featuredOffices.map((o) => (
+              <PlanOfficeCard key={o.slug} office={o} />
             ))}
           </div>
         )}
@@ -183,43 +206,9 @@ export function WhyGvozd() {
   );
 }
 
-export function PlanTeaser() {
-  return (
-    <section className="py-14">
-      <Container>
-        <div className="overflow-hidden rounded-2xl border border-[var(--gvozd-gray-200)] bg-[var(--gvozd-gray-50)]">
-          <div className="grid lg:grid-cols-2">
-            <div className="p-8 md:p-10">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--gvozd-red)]">
-                Навигация
-              </p>
-              <h2 className="mt-2 text-3xl font-bold text-[var(--gvozd-black)]">
-                План центра и номера офисов
-              </h2>
-              <p className="mt-3 text-[var(--gvozd-gray-500)]">
-                Ориентируйтесь по этажам и кабинетам — найдите нужный отдел до визита.
-              </p>
-              <Link
-                href="/plan"
-                className="mt-6 inline-flex h-11 items-center rounded-md bg-[var(--gvozd-red)] px-5 text-sm font-semibold text-white hover:bg-[var(--gvozd-red-dark)]"
-              >
-                Открыть план
-              </Link>
-            </div>
-            <div
-              className="relative min-h-[220px] bg-[linear-gradient(135deg,#1a1a1a_0%,#3a3a3a_50%,#E31E24_100%)]"
-              aria-hidden
-            >
-              <div className="absolute inset-0 opacity-40 [background-image:linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:32px_32px]" />
-            </div>
-          </div>
-        </div>
-      </Container>
-    </section>
-  );
-}
-
 export function HomeNews({ items }: { items: NewsItem[] }) {
+  if (items.length === 0) return null;
+
   return (
     <section className="bg-[var(--gvozd-gray-50)] py-14">
       <Container>
@@ -232,18 +221,11 @@ export function HomeNews({ items }: { items: NewsItem[] }) {
             </Link>
           }
         />
-        {items.length === 0 ? (
-          <EmptyState
-            title="Новостей пока нет"
-            description="Как только появятся публикации, они отобразятся здесь."
-          />
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {items.slice(0, 3).map((item) => (
-              <NewsCard key={String(item.id)} item={item} />
-            ))}
-          </div>
-        )}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {items.slice(0, 3).map((item) => (
+            <NewsCard key={String(item.id)} item={item} />
+          ))}
+        </div>
       </Container>
     </section>
   );

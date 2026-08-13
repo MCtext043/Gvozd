@@ -4,13 +4,20 @@ import Link from "next/link";
 import { useState } from "react";
 import { Menu, Phone, X } from "lucide-react";
 import type { Category } from "@/types";
-import { NAV_LINKS, SITE } from "@/lib/site";
+import { getVisibleNavLinks, SITE, type NavVisibility } from "@/lib/site";
 import { Logo } from "@/components/layout/logo";
 import { MegaMenu } from "@/components/layout/mega-menu";
 import { SearchAutocomplete } from "@/components/forms/search-autocomplete";
 
-export function Header({ categories }: { categories: Category[] }) {
+export function Header({
+  categories,
+  navVisibility,
+}: {
+  categories: Category[];
+  navVisibility?: NavVisibility;
+}) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const links = getVisibleNavLinks(navVisibility);
 
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--gvozd-gray-200)] bg-white/95 backdrop-blur">
@@ -19,7 +26,7 @@ export function Header({ categories }: { categories: Category[] }) {
 
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Основная навигация">
           <MegaMenu categories={categories} />
-          {NAV_LINKS.filter((l) => l.href !== "/catalog").map((link) => (
+          {links.filter((l) => l.href !== "/catalog").map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -40,12 +47,6 @@ export function Header({ categories }: { categories: Category[] }) {
             </a>
             <span className="text-xs text-[var(--gvozd-gray-500)]">{SITE.hours.short}</span>
           </div>
-          <Link
-            href="/contacts#lead"
-            className="inline-flex h-11 items-center justify-center rounded-md bg-[var(--gvozd-red)] px-5 text-sm font-semibold text-white hover:bg-[var(--gvozd-red-dark)]"
-          >
-            Связаться
-          </Link>
         </div>
 
         <button
@@ -69,7 +70,7 @@ export function Header({ categories }: { categories: Category[] }) {
       {mobileOpen ? (
         <div id="mobile-nav" className="border-t border-[var(--gvozd-gray-200)] bg-white lg:hidden">
           <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-4" aria-label="Мобильная навигация">
-            {NAV_LINKS.map((link) => (
+            {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}

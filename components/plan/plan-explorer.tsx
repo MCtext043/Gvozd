@@ -14,10 +14,23 @@ const floorLabel = (floor: number | null) => {
   return `${floor} этаж`;
 };
 
-export function PlanExplorer() {
-  const [hall, setHall] = useState<HallKey>("all");
-  const [q, setQ] = useState("");
-  const [tab, setTab] = useState<"map" | "offices" | "directory">("map");
+function parseHall(value?: string | null): HallKey {
+  if (value === "yellow" || value === "green" || value === "blue") return value;
+  return "all";
+}
+
+export function PlanExplorer({
+  initialHall,
+  initialQuery,
+}: {
+  initialHall?: string;
+  initialQuery?: string;
+} = {}) {
+  const [hall, setHall] = useState<HallKey>(() => parseHall(initialHall));
+  const [q, setQ] = useState(initialQuery ?? "");
+  const [tab, setTab] = useState<"map" | "offices" | "directory">(
+    initialQuery || (initialHall && initialHall !== "all") ? "offices" : "map",
+  );
 
   const offices = useMemo(() => {
     const query = q.trim().toLowerCase();

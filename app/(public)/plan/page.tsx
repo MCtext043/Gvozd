@@ -10,7 +10,13 @@ export const metadata: Metadata = {
   alternates: { canonical: "/plan" },
 };
 
-export default function PlanPage() {
+export default async function PlanPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; hall?: string }>;
+}) {
+  const { q, hall } = await searchParams;
+
   return (
     <div className="py-8 md:py-12">
       <Container>
@@ -25,7 +31,7 @@ export default function PlanPage() {
           title="План центра и номера офисов"
           description="Данные из буклета-путеводителя СЦ «Гвоздь»: схемы залов, список офисов и поисковая система товаров."
         />
-        <PlanExplorer />
+        <PlanExplorer initialHall={hall} initialQuery={q} />
       </Container>
     </div>
   );

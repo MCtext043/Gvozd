@@ -5,6 +5,11 @@ import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { getCategoryIcon } from "@/lib/category-icons";
+import {
+  floorLabel,
+  hallDotClass,
+  type PlanOffice,
+} from "@/lib/plan-offices";
 
 export function CategoryCard({ category }: { category: Category }) {
   const Icon = getCategoryIcon(category.slug);
@@ -94,6 +99,44 @@ export function CompanyCard({ company }: { company: Company }) {
           {company.categories.slice(0, 3).map((c) => (
             <Badge key={String(c.id)} tone="gray">
               {c.name}
+            </Badge>
+          ))}
+        </div>
+      ) : null}
+    </Link>
+  );
+}
+
+export function PlanOfficeCard({ office }: { office: PlanOffice }) {
+  const floor = floorLabel(office.floor);
+  return (
+    <Link
+      href={`/plan?q=${encodeURIComponent(office.number)}`}
+      className="group flex flex-col rounded-xl border border-[var(--gvozd-gray-200)] bg-white p-5 transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--gvozd-red)]"
+    >
+      <div className="flex items-start gap-3">
+        <div className="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-lg bg-[var(--gvozd-gray-100)] text-[var(--gvozd-red)]">
+          <span className="text-[10px] font-semibold uppercase leading-none text-[var(--gvozd-gray-500)]">
+            офис
+          </span>
+          <span className="text-base font-extrabold leading-tight">{office.number}</span>
+        </div>
+        <div className="min-w-0">
+          <h3 className="truncate font-semibold text-[var(--gvozd-black)] group-hover:text-[var(--gvozd-red)]">
+            {office.name}
+          </h3>
+          <p className="mt-0.5 flex items-center gap-1.5 text-xs text-[var(--gvozd-gray-500)]">
+            <span className={cn("inline-block h-2 w-2 rounded-full", hallDotClass(office.hall))} />
+            {office.hall_label}
+            {floor ? ` · ${floor}` : null}
+          </p>
+        </div>
+      </div>
+      {office.categories.length > 0 ? (
+        <div className="mt-auto flex flex-wrap gap-1.5 pt-4">
+          {office.categories.slice(0, 3).map((c) => (
+            <Badge key={c} tone="gray">
+              {c}
             </Badge>
           ))}
         </div>

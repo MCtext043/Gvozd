@@ -6,7 +6,6 @@ import {
   HomeNews,
   HomePromotions,
   HomeSearchSection,
-  PlanTeaser,
   QuickCategories,
   WhyGvozd,
 } from "@/components/home/sections";
@@ -47,7 +46,6 @@ export default async function HomePage() {
       <HomePromotions items={promotions} />
       <HomeCompanies items={companies} />
       <WhyGvozd />
-      <PlanTeaser />
       <HomeNews items={news} />
       <HomeLeadCta />
     </>

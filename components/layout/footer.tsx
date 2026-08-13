@@ -1,8 +1,10 @@
 import Link from "next/link";
-import { SITE, NAV_LINKS } from "@/lib/site";
+import { getVisibleNavLinks, SITE, type NavVisibility } from "@/lib/site";
 import { Logo } from "@/components/layout/logo";
 
-export function Footer() {
+export function Footer({ navVisibility }: { navVisibility?: NavVisibility }) {
+  const links = getVisibleNavLinks(navVisibility);
+
   return (
     <footer className="mt-auto border-t border-[var(--gvozd-gray-200)] bg-[var(--gvozd-black)] text-white">
       <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-3">
@@ -15,7 +17,7 @@ export function Footer() {
         <div>
           <h2 className="mb-3 text-sm font-bold uppercase tracking-[0.12em] text-white/50">Разделы</h2>
           <ul className="space-y-2 text-sm text-white/85">
-            {NAV_LINKS.map((link) => (
+            {links.map((link) => (
               <li key={link.href}>
                 <Link href={link.href} className="hover:text-[var(--gvozd-red)]">
                   {link.label}

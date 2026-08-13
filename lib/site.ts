@@ -63,13 +63,28 @@ export const ROOT_CATEGORIES = [
 
 export const NAV_LINKS = [
   { href: "/catalog", label: "Каталог" },
-  { href: "/companies", label: "Компании" },
+  { href: "/companies", label: "Отделы" },
   { href: "/promotions", label: "Акции" },
   { href: "/news", label: "Новости" },
   { href: "/about", label: "О центре" },
   { href: "/plan", label: "План центра" },
   { href: "/contacts", label: "Контакты" },
 ] as const;
+
+export type NavVisibility = {
+  promotions?: boolean;
+  news?: boolean;
+};
+
+/** Пункты меню с учётом пустых разделов акций/новостей */
+export function getVisibleNavLinks(visibility: NavVisibility = {}) {
+  const { promotions = true, news = true } = visibility;
+  return NAV_LINKS.filter((link) => {
+    if (link.href === "/promotions") return promotions;
+    if (link.href === "/news") return news;
+    return true;
+  });
+}
 
 export const ADMIN_NAV = [
   { href: "/admin", label: "Обзор", icon: "LayoutDashboard" },

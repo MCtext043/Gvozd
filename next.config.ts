@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // Скрыть плавающую кнопку Next.js Dev Tools («N») в режиме разработки
+  devIndicators: false,
   images: {
     remotePatterns: [
       { protocol: "http", hostname: "localhost", pathname: "/**" },

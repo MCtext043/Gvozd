@@ -1,7 +1,7 @@
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { SitePopup } from "@/components/popup/site-popup";
-import { getActivePopup, getCategories } from "@/services/api";
+import { getActivePopup, getCategories, getNews, getPromotions } from "@/services/api";
 import { SITE } from "@/lib/site";
 
 export default async function PublicLayout({
@@ -9,10 +9,17 @@ export default async function PublicLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [categories, popup] = await Promise.all([
+  const [categories, popup, promotions, news] = await Promise.all([
     getCategories(),
     getActivePopup(),
+    getPromotions(),
+    getNews(),
   ]);
+
+  const navVisibility = {
+    promotions: promotions.length > 0,
+    news: news.length > 0,
+  };
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -53,9 +60,9 @@ export default async function PublicLayout({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Header categories={categories} />
+      <Header categories={categories} navVisibility={navVisibility} />
       <main className="flex-1">{children}</main>
-      <Footer />
+      <Footer navVisibility={navVisibility} />
       <SitePopup popup={popup} />
     </>
   );
