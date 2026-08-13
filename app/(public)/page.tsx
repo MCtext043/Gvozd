@@ -4,6 +4,7 @@ import {
   HomeCompanies,
   HomeLeadCta,
   HomeNews,
+  HomePlanSection,
   HomePromotions,
   HomeSearchSection,
   QuickCategories,
@@ -45,6 +46,7 @@ export default async function HomePage() {
       <QuickCategories categories={categories} />
       <HomePromotions items={promotions} />
       <HomeCompanies items={companies} />
+      <HomePlanSection />
       <WhyGvozd />
       <HomeNews items={news} />
       <HomeLeadCta />

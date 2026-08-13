@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   MapPin,
   Maximize2,
@@ -9,16 +10,10 @@ import {
 } from "lucide-react";
 import { SITE } from "@/lib/site";
 import { Container, SectionHeading } from "@/components/ui/section";
-import {
-  CategoryCard,
-  CompanyCard,
-  NewsCard,
-  PlanOfficeCard,
-  PromotionCard,
-} from "@/components/catalog/cards";
+import { CategoryCard, NewsCard, PromotionCard } from "@/components/catalog/cards";
 import { SearchAutocomplete } from "@/components/forms/search-autocomplete";
 import { LeadForm } from "@/components/forms/lead-form";
-import { getFeaturedPlanOffices } from "@/lib/plan-offices";
+import { HomeOfficesFilter } from "@/components/plan/hall-filters";
 import planData from "@/lib/plan-data.json";
 import type { Category, Company, NewsItem, Promotion } from "@/types";
 
@@ -90,9 +85,7 @@ export function HomePromotions({ items }: { items: Promotion[] }) {
 }
 
 export function HomeCompanies({ items }: { items: Company[] }) {
-  const fromApi = items.length > 0;
-  const featuredOffices = getFeaturedPlanOffices(6);
-  const total = fromApi ? items.length : planData.offices.length;
+  const total = items.length > 0 ? items.length : planData.offices.length;
 
   return (
     <section className="py-14">
@@ -100,47 +93,50 @@ export function HomeCompanies({ items }: { items: Company[] }) {
         <SectionHeading
           eyebrow="Навигация по центру"
           title="Магазины и отделы"
-          description={`${total.toLocaleString("ru-RU")} точек на плане — найдите офис по номеру, залу или категории.`}
+          description={`${total.toLocaleString("ru-RU")} точек — фильтруйте по залу или откройте полный список.`}
           action={
-            <div className="flex flex-wrap gap-3">
-              <Link href="/companies" className="text-sm font-semibold text-[var(--gvozd-red)] hover:underline">
-                Все отделы
-              </Link>
-              <Link href="/plan" className="text-sm font-semibold text-[var(--gvozd-graphite)] hover:underline">
-                План этажей
-              </Link>
-            </div>
+            <Link href="/companies" className="text-sm font-semibold text-[var(--gvozd-red)] hover:underline">
+              Все отделы
+            </Link>
           }
         />
-        <div className="mb-6 flex flex-wrap gap-2">
-          {planData.halls.map((hall) => (
-            <Link
-              key={hall.key}
-              href={`/plan?hall=${hall.key}`}
-              className="inline-flex items-center gap-2 rounded-full border border-[var(--gvozd-gray-200)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--gvozd-graphite)] hover:border-[var(--gvozd-red)]/40"
-            >
-              <span
-                className="h-2.5 w-2.5 rounded-full"
-                style={{ backgroundColor: hall.color }}
-                aria-hidden
-              />
-              {hall.label}
+        <HomeOfficesFilter companies={items} />
+      </Container>
+    </section>
+  );
+}
+
+/** Только схема этажей — без списка офисов (он в блоке «Магазины и отделы») */
+export function HomePlanSection() {
+  return (
+    <section className="bg-[var(--gvozd-gray-50)] py-14">
+      <Container>
+        <SectionHeading
+          eyebrow="Ориентирование"
+          title="Планы этажей"
+          description="Схемы жёлтого, зелёного и синего залов из буклета центра."
+          action={
+            <Link href="/plan" className="text-sm font-semibold text-[var(--gvozd-red)] hover:underline">
+              Интерактивный план
             </Link>
-          ))}
-        </div>
-        {fromApi ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {items.slice(0, 6).map((c) => (
-              <CompanyCard key={String(c.id)} company={c} />
-            ))}
-          </div>
-        ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {featuredOffices.map((o) => (
-              <PlanOfficeCard key={o.slug} office={o} />
-            ))}
-          </div>
-        )}
+          }
+        />
+        <Link
+          href="/plan"
+          className="group relative block overflow-hidden rounded-2xl border border-[var(--gvozd-gray-200)] bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--gvozd-red)]"
+        >
+          <Image
+            src={planData.images.floors}
+            alt="Планы этажей строительного центра «Гвоздь»"
+            width={1600}
+            height={1100}
+            className="h-auto w-full transition-opacity group-hover:opacity-95"
+            sizes="(max-width:1280px) 100vw, 1280px"
+          />
+          <span className="absolute bottom-4 right-4 inline-flex h-11 items-center rounded-md bg-[var(--gvozd-red)] px-5 text-sm font-semibold text-white shadow-md group-hover:bg-[var(--gvozd-red-dark)]">
+            Открыть план
+          </span>
+        </Link>
       </Container>
     </section>
   );

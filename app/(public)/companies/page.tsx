@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { Container, EmptyState, SectionHeading } from "@/components/ui/section";
-import { CompanyCard, PlanOfficeCard } from "@/components/catalog/cards";
+import { Container, SectionHeading } from "@/components/ui/section";
+import { CompaniesHallFilter } from "@/components/plan/hall-filters";
 import { getCompanies } from "@/services/api";
-import { getPlanOffices } from "@/lib/plan-offices";
 import planData from "@/lib/plan-data.json";
 import { SITE } from "@/lib/site";
 
@@ -17,11 +16,10 @@ export const metadata: Metadata = {
 export default async function CompaniesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; hall?: string }>;
 }) {
-  const { q } = await searchParams;
+  const { q, hall } = await searchParams;
   const companies = await getCompanies({ q });
-  const offices = companies.length === 0 ? getPlanOffices(q) : [];
 
   return (
     <div className="py-8 md:py-12">
@@ -38,7 +36,7 @@ export default async function CompaniesPage({
           description={
             companies.length > 0
               ? "Контакты, номера офисов и ассортимент."
-              : `${planData.offices.length} офисов с плана этажей — ищите по названию, номеру или категории.`
+              : `${planData.offices.length} офисов — фильтруйте по залу или ищите по названию.`
           }
           action={
             <Link href="/plan" className="text-sm font-semibold text-[var(--gvozd-red)] hover:underline">
@@ -48,6 +46,7 @@ export default async function CompaniesPage({
         />
 
         <form className="mb-8" action="/companies" method="get">
+          {hall ? <input type="hidden" name="hall" value={hall} /> : null}
           <label className="block max-w-xl">
             <span className="sr-only">Поиск отдела</span>
             <input
@@ -60,46 +59,7 @@ export default async function CompaniesPage({
           </label>
         </form>
 
-        <div className="mb-6 flex flex-wrap gap-2">
-          {planData.halls.map((hall) => (
-            <Link
-              key={hall.key}
-              href={`/plan?hall=${hall.key}`}
-              className="inline-flex items-center gap-2 rounded-full border border-[var(--gvozd-gray-200)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--gvozd-graphite)] hover:border-[var(--gvozd-red)]/40"
-            >
-              <span
-                className="h-2.5 w-2.5 rounded-full"
-                style={{ backgroundColor: hall.color }}
-                aria-hidden
-              />
-              {hall.label}
-            </Link>
-          ))}
-        </div>
-
-        {companies.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {companies.map((c) => (
-              <CompanyCard key={String(c.id)} company={c} />
-            ))}
-          </div>
-        ) : offices.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {offices.map((o) => (
-              <PlanOfficeCard key={o.slug} office={o} />
-            ))}
-          </div>
-        ) : (
-          <EmptyState
-            title="Ничего не найдено"
-            description="Попробуйте другой запрос или откройте план этажей."
-            action={
-              <Link href="/plan" className="text-sm font-semibold text-[var(--gvozd-red)]">
-                План центра
-              </Link>
-            }
-          />
-        )}
+        <CompaniesHallFilter companies={companies} initialHall={hall} query={q} />
       </Container>
     </div>
   );

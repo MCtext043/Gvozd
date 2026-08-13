@@ -120,15 +120,35 @@ export function PlanExplorer({
             />
           </div>
           <div className="flex flex-wrap gap-3">
-            {planData.halls.map((h) => (
-              <span
-                key={h.key}
-                className="inline-flex items-center gap-2 rounded-full border border-[var(--gvozd-gray-200)] bg-white px-3 py-1.5 text-sm font-medium"
-              >
-                <span className="h-3 w-3 rounded-full" style={{ background: h.color }} aria-hidden />
-                {h.label}
-              </span>
-            ))}
+            {(
+              [
+                ["all", "Все залы", null],
+                ...planData.halls.map((h) => [h.key, h.label, h.color] as const),
+              ] as const
+            ).map(([key, label, color]) => {
+              const active = hall === key || (key === "all" && hall === "all");
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => {
+                    setHall(key as HallKey);
+                    setTab("offices");
+                  }}
+                  aria-pressed={active}
+                  className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
+                    active
+                      ? "border-[var(--gvozd-graphite)] bg-[var(--gvozd-graphite)] text-white"
+                      : "border-[var(--gvozd-gray-200)] bg-white hover:border-[var(--gvozd-red)]/40"
+                  }`}
+                >
+                  {color ? (
+                    <span className="h-3 w-3 rounded-full" style={{ background: color }} aria-hidden />
+                  ) : null}
+                  {label}
+                </button>
+              );
+            })}
           </div>
           <div className="grid gap-2 sm:grid-cols-3">
             {planData.entrances.map((e) => (
