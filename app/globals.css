@@ -1,26 +1,68 @@
 @import "tailwindcss";
 
 :root {
+  --gvozd-red: #e31e24;
+  --gvozd-red-dark: #c4181e;
+  --gvozd-black: #111111;
+  --gvozd-graphite: #1f2428;
+  --gvozd-gray-50: #f6f7f8;
+  --gvozd-gray-100: #eef0f2;
+  --gvozd-gray-200: #e2e5e8;
+  --gvozd-gray-300: #c8ced4;
+  --gvozd-gray-500: #6b737c;
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #111111;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-gvozd-red: var(--gvozd-red);
+  --color-gvozd-graphite: var(--gvozd-graphite);
+  --font-sans: var(--font-manrope);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--gvozd-red) 25%, white);
+}
+
+a {
+  text-underline-offset: 3px;
+}
+
+:focus-visible {
+  outline: none;
+}
+
+.prose-gvozd {
+  line-height: 1.7;
+  color: var(--gvozd-graphite);
+}
+
+.prose-gvozd h2,
+.prose-gvozd h3 {
+  color: var(--gvozd-black);
+  font-weight: 700;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.prose-gvozd p {
+  margin-bottom: 1em;
+}
+
+.prose-gvozd ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+  margin-bottom: 1em;
 }
