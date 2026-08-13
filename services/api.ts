@@ -181,13 +181,13 @@ export async function submitArenda(payload: Record<string, unknown>) {
 }
 
 export async function adminLogin(email: string, password: string) {
-  return apiPost<AuthTokens>("/auth/login", { email, password }, {
+  return apiPost<AuthTokens>("/admin/auth/login", { email, password }, {
     cache: "no-store",
   });
 }
 
 export async function getDashboardStats(token: string) {
-  return apiGet<DashboardStats>("/admin/stats", {
+  return apiGet<DashboardStats>("/admin/dashboard", {
     token,
     cache: "no-store",
   });
