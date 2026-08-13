@@ -87,17 +87,24 @@ export default async function CategoryPage({ params }: Props) {
             ) : null}
 
             <section>
-              <h2 className="mb-4 text-lg font-bold">Компании в категории</h2>
+              <h2 className="mb-4 text-lg font-bold">
+                Компании в категории
+                {companies.length > 0 ? (
+                  <span className="ml-2 text-sm font-medium text-[var(--gvozd-gray-500)]">
+                    ({companies.length})
+                  </span>
+                ) : null}
+              </h2>
               {companies.length === 0 ? (
                 <EmptyState
                   title="Пока нет компаний в этой категории"
-                  description="Список появится из API. Вы можете оставить заявку или позвонить в службу информации."
+                  description="Попробуйте соседнюю категорию или откройте полный список отделов."
                   action={
                     <Link
-                      href="/contacts"
+                      href="/companies"
                       className="text-sm font-semibold text-[var(--gvozd-red)] hover:underline"
                     >
-                      Связаться с нами
+                      Все отделы
                     </Link>
                   }
                 />

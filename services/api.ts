@@ -1,5 +1,10 @@
 import { apiGet, apiPost, apiPut, apiPatch, safeGet, unwrapList } from "@/lib/api";
-import { ROOT_CATEGORIES } from "@/lib/site";
+import {
+  catalogIndexRoots,
+  categoryFromCatalogIndex,
+  companiesForCatalogSlug,
+} from "@/lib/catalog-from-plan";
+import catalogIndex from "@/lib/catalog-index.json";
 import type {
   AuthTokens,
   Banner,
@@ -23,15 +28,13 @@ export async function getCategories(): Promise<Category[]> {
   const data = await safeGet<Category[] | Paginated<Category>>("/categories", []);
   const list = asList(data);
   if (list.length > 0) return list;
-  return ROOT_CATEGORIES.map((c, i) => ({
-    id: i + 1,
-    slug: c.slug,
-    name: c.name,
-  }));
+  return catalogIndexRoots();
 }
 
 export async function getCategory(slug: string): Promise<Category | null> {
-  return safeGet<Category | null>(`/categories/${slug}`, null);
+  const fromApi = await safeGet<Category | null>(`/categories/${slug}`, null);
+  if (fromApi) return fromApi;
+  return categoryFromCatalogIndex(slug);
 }
 
 export async function getCompanies(params?: {
@@ -44,11 +47,56 @@ export async function getCompanies(params?: {
     [],
     { searchParams: params },
   );
-  return asList(data);
+  const list = asList(data);
+  if (list.length > 0) return list;
+  if (params?.category) {
+    let items = companiesForCatalogSlug(params.category);
+    if (params.q) {
+      const q = params.q.trim().toLowerCase();
+      items = items.filter(
+        (c) =>
+          c.name.toLowerCase().includes(q) ||
+          String(c.office_number ?? "").includes(q) ||
+          (c.assortment ?? "").toLowerCase().includes(q),
+      );
+    }
+    return items;
+  }
+  if (params?.q) {
+    const q = params.q.trim().toLowerCase();
+    return Object.values(
+      Object.fromEntries(
+        catalogIndexRoots().flatMap((root) =>
+          companiesForCatalogSlug(root.slug).map((c) => [c.slug, c]),
+        ),
+      ),
+    ).filter(
+      (c) =>
+        c.name.toLowerCase().includes(q) ||
+        String(c.office_number ?? "").includes(q),
+    );
+  }
+  return [];
 }
 
 export async function getCompany(slug: string): Promise<Company | null> {
-  return safeGet<Company | null>(`/companies/${slug}`, null);
+  const fromApi = await safeGet<Company | null>(`/companies/${slug}`, null);
+  if (fromApi) return fromApi;
+  const byRoot = catalogIndex.by_root as Record<string, { id: string; slug: string; name: string; office_number: string; categories: { id: string; slug: string; name: string }[] }[]>;
+  for (const list of Object.values(byRoot)) {
+    const hit = list.find((c) => c.slug === slug);
+    if (hit) {
+      return {
+        id: hit.id,
+        slug: hit.slug,
+        name: hit.name,
+        office_number: hit.office_number,
+        assortment: hit.categories.map((x) => x.name).join(", "),
+        categories: hit.categories,
+      };
+    }
+  }
+  return null;
 }
 
 export async function getPromotions(): Promise<Promotion[]> {
