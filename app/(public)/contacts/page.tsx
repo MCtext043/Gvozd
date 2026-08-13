@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container, SectionHeading } from "@/components/ui/section";
 import { LeadForm } from "@/components/forms/lead-form";
+import { LocationMap } from "@/components/location/location-map";
 import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -77,13 +78,6 @@ export default function ContactsPage() {
                 </li>
               </ul>
             </div>
-
-            <div className="overflow-hidden rounded-xl border border-[var(--gvozd-gray-200)] bg-[var(--gvozd-gray-100)]">
-              <div className="flex aspect-[16/10] items-center justify-center p-6 text-center text-sm text-[var(--gvozd-gray-500)]">
-                Карта: Ижевск, ул. Удмуртская, 304
-                <span className="sr-only">Адрес строительного центра Гвоздь</span>
-              </div>
-            </div>
           </div>
 
           <div className="h-fit rounded-xl border border-[var(--gvozd-gray-200)] bg-white p-6 shadow-sm">
@@ -95,6 +89,13 @@ export default function ContactsPage() {
             />
           </div>
         </div>
+
+        <section className="mt-12" aria-labelledby="directions-heading">
+          <h2 id="directions-heading" className="mb-4 text-2xl font-bold text-[var(--gvozd-black)]">
+            Как до нас добраться?
+          </h2>
+          <LocationMap height={360} />
+        </section>
       </Container>
     </div>
   );

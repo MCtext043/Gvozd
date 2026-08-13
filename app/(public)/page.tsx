@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { BannerCarousel } from "@/components/banners/banner-carousel";
 import {
   HomeCompanies,
+  HomeDirections,
   HomeLeadCta,
   HomeNews,
   HomePlanSection,
@@ -49,6 +50,7 @@ export default async function HomePage() {
       <HomePlanSection />
       <WhyGvozd />
       <HomeNews items={news} />
+      <HomeDirections />
       <HomeLeadCta />
     </>
   );

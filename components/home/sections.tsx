@@ -14,6 +14,7 @@ import { CategoryCard, NewsCard, PromotionCard } from "@/components/catalog/card
 import { SearchAutocomplete } from "@/components/forms/search-autocomplete";
 import { LeadForm } from "@/components/forms/lead-form";
 import { HomeOfficesFilter } from "@/components/plan/hall-filters";
+import { LocationMap } from "@/components/location/location-map";
 import planData from "@/lib/plan-data.json";
 import type { Category, Company, NewsItem, Promotion } from "@/types";
 
@@ -252,6 +253,29 @@ export function HomeLeadCta() {
           </div>
           <LeadForm source="home" title="Напишите нам" submitLabel="Отправить заявку" />
         </div>
+      </Container>
+    </section>
+  );
+}
+
+export function HomeDirections() {
+  return (
+    <section className="bg-[var(--gvozd-gray-50)] py-14">
+      <Container>
+        <SectionHeading
+          eyebrow="Визит в центр"
+          title="Как до нас добраться?"
+          description={`${SITE.address.street} — удобный подъезд и остановки общественного транспорта.`}
+          action={
+            <Link
+              href="/contacts"
+              className="text-sm font-semibold text-[var(--gvozd-red)] hover:underline"
+            >
+              Контакты
+            </Link>
+          }
+        />
+        <LocationMap height={320} />
       </Container>
     </section>
   );

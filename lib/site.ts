@@ -28,6 +28,16 @@ export const SITE = {
     "трамвай «Подшипниковый завод»",
     "автобус/троллейбус «Завод Редуктор»",
   ],
+  /** Координаты для Яндекс.Карт (долгота, широта) — Удмуртская, 304 */
+  map: {
+    lon: 53.2223,
+    lat: 56.8587,
+    zoom: 16,
+    orgUrl:
+      "https://yandex.ru/maps/org/spetsializirovanny_torgovy_tsentr_gvozd/1205976838/",
+    directionsUrl:
+      "https://yandex.ru/maps/?rtext=~56.8587,53.2223&rtt=auto",
+  },
   admin: {
     name: "Каркина Альбина Робертовна",
     phone: "8-912-859-35-25",
