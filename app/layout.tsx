@@ -16,6 +16,10 @@ export const metadata: Metadata = {
     template: `%s | ${SITE.name}`,
   },
   description: `${SITE.slogan} Строительный центр в Ижевске: ${SITE.address.street}. ${SITE.areaSqM.toLocaleString("ru-RU")} м² ассортимента.`,
+  icons: {
+    icon: [{ url: "/icon.png", type: "image/png" }],
+    apple: [{ url: "/icon.png" }],
+  },
   openGraph: {
     type: "website",
     locale: "ru_RU",
@@ -23,6 +27,7 @@ export const metadata: Metadata = {
     title: SITE.fullName,
     description: SITE.tagline,
     url: SITE.url,
+    images: [{ url: "/brand/logo-gvozd.png", alt: "Логотип СЦ Гвоздь" }],
   },
   robots: {
     index: true,

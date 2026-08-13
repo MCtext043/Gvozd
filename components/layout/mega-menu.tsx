@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import type { Category } from "@/types";
 import { cn } from "@/lib/utils";
+import { getCategoryIcon } from "@/lib/category-icons";
+import { ROOT_CATEGORIES } from "@/lib/site";
 
 export function MegaMenu({ categories }: { categories: Category[] }) {
   const [open, setOpen] = useState(false);
@@ -25,7 +27,15 @@ export function MegaMenu({ categories }: { categories: Category[] }) {
     };
   }, []);
 
-  const roots = categories.filter((c) => !c.parent_id).slice(0, 13);
+  const roots =
+    categories.filter((c) => !c.parent_id).length > 0
+      ? categories.filter((c) => !c.parent_id).slice(0, 13)
+      : ROOT_CATEGORIES.map((c, i) => ({
+          id: i + 1,
+          slug: c.slug,
+          name: c.name,
+          parent_id: null,
+        }));
 
   return (
     <div ref={ref} className="relative">
@@ -45,7 +55,7 @@ export function MegaMenu({ categories }: { categories: Category[] }) {
 
       {open ? (
         <div
-          className="absolute left-0 top-full z-50 mt-2 w-[min(92vw,720px)] rounded-xl border border-[var(--gvozd-gray-200)] bg-white p-5 shadow-xl"
+          className="absolute left-0 top-full z-50 mt-2 w-[min(94vw,820px)] rounded-xl border border-[var(--gvozd-gray-200)] bg-white p-5 shadow-xl"
           role="menu"
           aria-label="Категории каталога"
         >
@@ -62,18 +72,24 @@ export function MegaMenu({ categories }: { categories: Category[] }) {
             </Link>
           </div>
           <ul className="grid gap-1 sm:grid-cols-2 lg:grid-cols-3">
-            {roots.map((cat) => (
-              <li key={String(cat.id)}>
-                <Link
-                  role="menuitem"
-                  href={`/catalog/${cat.slug}`}
-                  className="block rounded-md px-3 py-2 text-sm font-medium text-[var(--gvozd-graphite)] hover:bg-[var(--gvozd-gray-50)] hover:text-[var(--gvozd-red)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--gvozd-red)]"
-                  onClick={() => setOpen(false)}
-                >
-                  {cat.name}
-                </Link>
-              </li>
-            ))}
+            {roots.map((cat) => {
+              const Icon = getCategoryIcon(cat.slug);
+              return (
+                <li key={String(cat.id ?? cat.slug)}>
+                  <Link
+                    role="menuitem"
+                    href={`/catalog/${cat.slug}`}
+                    className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-[var(--gvozd-graphite)] hover:bg-[var(--gvozd-gray-50)] hover:text-[var(--gvozd-red)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--gvozd-red)]"
+                    onClick={() => setOpen(false)}
+                  >
+                    <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--gvozd-red)]/10 text-[var(--gvozd-red)]">
+                      <Icon className="h-4 w-4" aria-hidden />
+                    </span>
+                    <span>{cat.name}</span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
       ) : null}

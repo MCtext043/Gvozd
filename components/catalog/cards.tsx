@@ -4,8 +4,10 @@ import type { Category, Company, NewsItem, Promotion } from "@/types";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { getCategoryIcon } from "@/lib/category-icons";
 
 export function CategoryCard({ category }: { category: Category }) {
+  const Icon = getCategoryIcon(category.slug);
   return (
     <Link
       href={`/catalog/${category.slug}`}
@@ -26,6 +28,9 @@ export function CategoryCard({ category }: { category: Category }) {
         />
       )}
       <div className="relative">
+        <span className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--gvozd-red)]/10 text-[var(--gvozd-red)]">
+          <Icon className="h-5 w-5" aria-hidden />
+        </span>
         <h3 className="text-base font-bold text-[var(--gvozd-black)] group-hover:text-[var(--gvozd-red)]">
           {category.name}
         </h3>
